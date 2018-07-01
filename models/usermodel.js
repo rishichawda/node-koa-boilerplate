@@ -20,7 +20,14 @@ userschema.pre('save', function (next) {
             next();
          })
     })
- })
+ });
+
+ userschema.methods.compare_password = function (password, callback) { 
+     bcrypt.compare(password, this.password, function (err, isMatch) { 
+         if(err) { return callback(err); }
+         callback(null, isMatch);
+      })
+  }
 
 const model = mongoose.model('user', userschema);
 

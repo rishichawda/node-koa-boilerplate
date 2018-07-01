@@ -27,9 +27,7 @@ function signup(req, res, next) {
         });
 
         newuser.save((err)=>{
-            if(err) {
-                return next(err);
-            }
+            if(err) { return next(err); }
             res.send({ token: generate_token(newuser) });
         })
     });
@@ -37,6 +35,11 @@ function signup(req, res, next) {
  }
 
 
+function login(req, res, next) { 
+    res.send({ token: generate_token(req.user) })
+ }
+
  module.exports = {
-     signup
+     signup,
+     login
  }
