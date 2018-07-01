@@ -2,7 +2,7 @@
 ###### Minimal Server boilerplate with Signup and Login using Passport, Bcrypt and JWT.
 ------------------------------------------------------------------------------------------------------------------
 
-You'll need to create a folder named `config` under the **root directory** which exports an object with,
+You'll need to create a folder named `config` containing _config.js file_ under the **root directory** which exports an object with,
 
   * your secret salt ( for bcrypt )  
   * your secret key for encoding using JWT  
