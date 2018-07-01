@@ -5,7 +5,7 @@ const jwt_strategy = require('passport-jwt').Strategy;
 const jwt_extract = require('passport-jwt').ExtractJwt;
 const local_strategy = require('passport-local');
 
-
+// setup local strategy
 const local_options = { usernameField: 'email' };
 const local_login = new local_strategy(local_options, (email, password, done)=>{
     user.findOne({ email: email }, (err, user_obj)=>{
