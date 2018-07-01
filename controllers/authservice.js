@@ -7,6 +7,7 @@ function generate_token(user) {
     return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
  }
 
+ // Signup route
 function signup(req, res, next) {
     const email = req.body.email;
     const password = req.body.password;
