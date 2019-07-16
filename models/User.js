@@ -1,19 +1,17 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
-const config = require('../config/config');
 
-const userschema = new schema({
+const userShema = new schema({
     email: { type: String, unique: true, lowercase: true },
     password: String
 });
 
-userschema.pre('save', function (next) { 
+userShema.pre('save', function (next) { 
     var user = this;
 
-    bcrypt.genSalt(config.salt, (err, salt) => {
+    bcrypt.genSalt(process.env.BCRYPT_SALT_ROUNDS, (err, salt) => {
         if(err) { next(err); }
-
         bcrypt.hash(user.password, salt, null, function (err, hash) { 
             if(err) { next(err); }
 
@@ -23,13 +21,12 @@ userschema.pre('save', function (next) {
     })
  });
 
- userschema.methods.compare_password = function (password, callback) { 
-     bcrypt.compare(password, this.password, function (err, isMatch) { 
-         if(err) { return callback(err); }
-         callback(null, isMatch);
-      })
+ userShema.methods.comparePassword = async function (password, callback) { 
+    bcrypt.compare(password, this.password, function (err, res) {
+        callback(err, res);
+    });
   }
 
-const model = mongoose.model('user', userschema);
+const model = mongoose.model('user', userShema);
 
 module.exports = model;
