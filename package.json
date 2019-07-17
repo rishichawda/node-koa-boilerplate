@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
+    "lint": "eslint . && echo \"No lint errors!\" && exit 0",
+    "lint:fix": "eslint . --fix && echo \"All eslint issues fixed!\" && exit 0",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -25,14 +27,22 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "eslint": "^6.0.1",
+    "husky": "^3.0.0",
+    "lint-staged": "^9.2.0",
     "nodemon": "^1.19.1"
   },
   "_moduleAliases": {
-    "@root"      : ".",
-    "config"      : "./config",
-    "controllers" : "./controllers",
-    "services"  : "./services",
-    "routes"  : "./routes",
-    "models"  : "./models"
+    "@root": ".",
+    "config": "./config",
+    "controllers": "./controllers",
+    "services": "./services",
+    "routes": "./routes",
+    "models": "./models"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
