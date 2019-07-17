@@ -1,4 +1,4 @@
-require('module-alias/register')
+require('module-alias/register');
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -60,14 +60,14 @@ app.use(function (req, res) {
     message: '404 Not Found',
     error,
   });
-})
+});
 
 /** 
  * Setup error handling to prevent errors from being displayed on the client side.
  * For development, only print stacktrace; while on production, don't send any errors. 
 */
 if (!isProduction) {
-  app.use(function (error, req, res, next) {
+  app.use(function (error, req, res) {
     console.log(error.stack);
 
     res.status(error.status || 500);
@@ -77,16 +77,16 @@ if (!isProduction) {
         error,
       }
     });
-  })
+  });
 } else {
-  app.use(function (error, req, res, next) {
+  app.use(function (error, req, res) {
     res.status(error.status || 500);
     res.json({
       error: {
         message: error.message,
         error: {},
       }
-    })
+    });
   });
 }
 

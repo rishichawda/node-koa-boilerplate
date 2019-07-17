@@ -1,14 +1,14 @@
-const passport = require("passport");
-const localStrategy = require("passport-local").Strategy;
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
 
-const User = require("models/User");
+const User = require('models/User');
 
 module.exports = () => {
   passport.use(
     new localStrategy(
       {
-        usernameField: "email",
-        passwordField: "password"
+        usernameField: 'email',
+        passwordField: 'password'
       },
       function(email, password, done) {
         User.findOne({ email })
@@ -19,13 +19,13 @@ module.exports = () => {
                   return done(null, user);
                 } else {
                   return done(null, false, {
-                    error: { message : "email or password is invalid", status: 401, ...err }
+                    error: { message : 'email or password is invalid', status: 401, ...err }
                   });
                 }
               });
             } else {
               return done(null, false, {
-                error: { message : "email or password is invalid", status: 401 }
+                error: { message : 'email or password is invalid', status: 401 }
               });
             }
           })
