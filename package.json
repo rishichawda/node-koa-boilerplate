@@ -17,6 +17,7 @@
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "jwt-simple": "^0.5.1",
+    "module-alias": "^2.2.0",
     "mongoose": "^5.1.7",
     "morgan": "^1.9.0",
     "passport": "^0.4.0",
@@ -25,5 +26,13 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
+  },
+  "_moduleAliases": {
+    "@root"      : ".",
+    "config"      : "./config",
+    "controllers" : "./controllers",
+    "services"  : "./services",
+    "routes"  : "./routes",
+    "models"  : "./models"
   }
 }

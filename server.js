@@ -1,11 +1,13 @@
+require('module-alias/register')
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const setupEnvironment = require('./config/environmentSetup');
-const setupPassportStrategy = require('./config/passportStrategySetup');
+
+const setupEnvironment = require('config/environmentSetup');
+const setupPassportStrategy = require('config/passportStrategySetup');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -14,7 +16,7 @@ setupEnvironment();
 
 setupPassportStrategy();
 
-const routes = require('./routes');
+const routes = require('routes');
 
 // Create app object from express.
 const app = express();
@@ -34,7 +36,11 @@ if (isProduction) {
   mongoose.set('debug', true);
 }
 
-// Configure app with various options.
+/** 
+ * Configure app with various options.
+ * Currently, logger, bodyparser and cors setup
+ */
+
 app.use(cors());
 
 // Enable logging.

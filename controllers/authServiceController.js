@@ -1,6 +1,7 @@
-const User = require('../models/User');
 const jwt = require('jwt-simple');
 const passport = require('passport');
+
+const User = require('models/User');
 
 function generateUserToken(user) { 
     const timestamp = new Date().getTime();
