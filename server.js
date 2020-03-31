@@ -4,7 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
 
 const setupEnvironment = require('config/environmentSetup');
 const setupPassportStrategy = require('config/passportStrategySetup');
@@ -27,14 +27,27 @@ const app = express();
 //   app.use(errorHandler());
 // }
 
-// Connect to mongodb database.
-if (isProduction) {
-  mongoose.connect(process.env.PRODUCTION_DATABASE_URL);
-} else {
-  mongoose.connect(`mongodb://${process.env.DATABASE_URL}`);
-  // Enable logging collection methods and arguments.
-  mongoose.set('debug', true);
-}
+// Connect to postgres database.
+// Option 1: Passing parameters separately
+const sequelize = new Sequelize(
+  process.env.DATABASE_NAME,
+  process.env.DATABASE_USERNAME,
+  process.env.DATABASE_PASSWORD,
+  {
+    host: process.env.DATABASE_HOST,
+    dialect: 'postgres',
+  }
+);
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+    throw err;
+  });
 
 /** 
  * Configure app with various options.
