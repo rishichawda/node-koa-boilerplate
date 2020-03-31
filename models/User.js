@@ -1,33 +1,38 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
-
-const schema = mongoose.Schema;
-
-const userSchema = new schema({
-  email: { type: String, unique: true, lowercase: true },
-  password: String
-});
-
-userSchema.pre('save', function (next) { 
-  var user = this;
-
-  bcrypt.genSalt(process.env.BCRYPT_SALT_ROUNDS, (err, salt) => {
-    if(err) { next(err); }
-    bcrypt.hash(user.password, salt, null, function (err, hash) { 
-      if(err) { next(err); }
-
-      user.password = hash;
-      next();
+'use strict';
+const bcrypt = require('bcrypt');
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    'User',
+    {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      firstName: {
+        type: DataTypes.STRING
+      },
+      lastName: {
+        type: DataTypes.STRING
+      }
+    },
+    {}
+  );
+  User.associate = function() {
+    // associations can be defined here
+  };
+  User.findBy = async function(selection) {
+    const user = await User.findOne({ where: selection });
+    return user;
+  };
+  User.prototype.verifyPassword = async function (password, callback) {
+    bcrypt.compare(password, this.password, function (err, res) {
+      callback(err, res);
     });
-  });
-});
-
-userSchema.methods.comparePassword = async function (password, callback) { 
-  bcrypt.compare(password, this.password, function (err, res) {
-    callback(err, res);
-  });
+  };
+  return User;
 };
-
-const model = mongoose.model('user', userSchema);
-
-module.exports = model;
