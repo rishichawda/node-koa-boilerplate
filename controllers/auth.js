@@ -1,13 +1,7 @@
-const jwt = require('jwt-simple');
+/* eslint-disable require-atomic-updates */
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { User, sequelize } = require('models');
-const sendErrorResponse = require('utils/sendErrorResponse');
-
-function generateUserToken(user) { 
-  const timestamp = new Date().getTime();
-  return jwt.encode({ sub: user.id, iat: timestamp }, process.env.JSON_WEB_TOKEN_SECRET);
-}
 
 async function createUser(data) {
   const transaction = await sequelize.transaction();
@@ -24,15 +18,19 @@ async function createUser(data) {
 }
 
 // Signup route
-async function signup(req, res) {
-  const {email, password, firstName, lastName } = req.body;
-  if(!email || !password) {
-    return sendErrorResponse(res, 422, 'Bad request. Missing parameters');
+const signup = async ctx => {
+  const { email, password, firstName, lastName } = ctx.request.body;
+  if (!email || !password) {
+    ctx.status = 400;
+    ctx.message = 'Bad Request. Missing credentials.';
+    return;
   }
   try {
     const user = await User.findBy({ email });
-    if(user) {
-      return sendErrorResponse(res, 422, 'User already exists');
+    if (user) {
+      ctx.status = 422;
+      ctx.message = 'User already exists';
+      return;
     }
     const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT_ROUNDS));
     const hashedPassword = bcrypt.hashSync(password, salt);
@@ -42,36 +40,39 @@ async function signup(req, res) {
       firstName,
       lastName
     });
-    return res.send({
-      data: {
+    ctx.status = 200;
+    ctx.body = {
+      token: createdUser.generateJwtToken(),
+      user: {
         id: createdUser.id,
-        token: generateUserToken(createdUser),
-        email: createdUser.email
-      }
-    });
+        email: createdUser.email,
+        firstName: createdUser.firstName,
+        lastName: createdUser.lastName,
+      },
+    };
   } catch (err) {
-    sendErrorResponse(res, 500, 'An unexpected error occurred', err);
+    ctx.status = 500;
+    ctx.message = err.message || 'An unexpected error occurred';
+    ctx.body = {
+      originalError: err
+    };
   }
-}
+};
 
 // Login route
-function login(req, res, next) {
-  const email = req.body.email;
-  const password = req.body.password;
-  if (!email || !password) {
-    return sendErrorResponse(res, 422, 'Email / password cannot be blank.');
-  }
-  passport.authenticate('local', { session: false }, function (error, user) {
-    if (error) {
-      return next(error);
+function login(ctx) {
+  return passport.authenticate('local', (_, user, info, status) => {
+    if (info) {
+      ctx.message = info.message;
+    }
+    if (status) {
+      ctx.status = status;
     }
     if (user) {
-      const token = generateUserToken(user);
-      return res.send({ token });
-    } else {
-      return sendErrorResponse(res, 401, 'invalid credentials');
+      ctx.status = 200;
+      ctx.body = user;
     }
-  })(req, res, next);
+  })(ctx);
 }
 
 module.exports = {
