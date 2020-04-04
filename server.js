@@ -1,22 +1,19 @@
 require('module-alias/register');
+require('config/environmentSetup')();
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const morgan = require('morgan');
-const Sequelize = require('sequelize');
+const routes = require('routes');
 
-const setupEnvironment = require('config/environmentSetup');
 const setupPassportStrategy = require('config/passportStrategySetup');
+setupPassportStrategy();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Setup environment before importing router. Can also be moved to top of the file.
-setupEnvironment();
-
-setupPassportStrategy();
-
-const routes = require('routes');
+// Initialize db connection
+require('./models');
 
 // Create app object from express.
 const app = express();
@@ -26,28 +23,6 @@ const app = express();
 // if (!isProduction) {
 //   app.use(errorHandler());
 // }
-
-// Connect to postgres database.
-// Option 1: Passing parameters separately
-const sequelize = new Sequelize(
-  process.env.DATABASE_NAME,
-  process.env.DATABASE_USERNAME,
-  process.env.DATABASE_PASSWORD,
-  {
-    host: process.env.DATABASE_HOST,
-    dialect: 'postgres',
-  }
-);
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-    throw err;
-  });
 
 /** 
  * Configure app with various options.

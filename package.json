@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "NODE_ENV=development nodemon server.js",
     "lint": "eslint . && echo \"No lint errors!\" && exit 0",
     "lint:fix": "eslint . --fix && echo \"All eslint issues fixed!\" && exit 0",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt": "^4.0.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
@@ -32,7 +32,8 @@
     "eslint": "^6.0.1",
     "husky": "^3.0.0",
     "lint-staged": "^9.2.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "sequelize-cli": "^5.5.1"
   },
   "_moduleAliases": {
     "@root": ".",
@@ -40,7 +41,8 @@
     "controllers": "./controllers",
     "services": "./services",
     "routes": "./routes",
-    "models": "./models"
+    "models": "./models",
+    "utils": "./utils"
   },
   "husky": {
     "hooks": {

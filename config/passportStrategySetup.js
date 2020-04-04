@@ -1,7 +1,7 @@
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 
-const User = require('models/User');
+const {User} = require('models');
 
 module.exports = () => {
   passport.use(
@@ -11,15 +11,19 @@ module.exports = () => {
         passwordField: 'password'
       },
       function(email, password, done) {
-        User.findOne({ email })
+        User.findBy({ email })
           .then(function(user) {
             if (user) {
-              return user.comparePassword(password, (err = {}, isMatch) => {
+              return user.verifyPassword(password, (err = {}, isMatch) => {
                 if (isMatch) {
                   return done(null, user);
                 } else {
                   return done(null, false, {
-                    error: { message : 'email or password is invalid', status: 401, ...err }
+                    error: {
+                      message: 'email or password is invalid',
+                      status: 401,
+                      ...err
+                    }
                   });
                 }
               });
