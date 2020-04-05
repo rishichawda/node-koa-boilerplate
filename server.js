@@ -5,6 +5,7 @@ const bodyParser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const passport = require('koa-passport');
 const session = require('koa-session');
+const cors = require('@koa/cors');
 const router = require('./router');
 
 // Initialize db connection
@@ -12,6 +13,9 @@ require('./models');
 
 // Create app object from koa.
 const app = new koa();
+
+// Enable cors
+app.use(cors());
 
 // Enable logging.
 app.use(logger());
