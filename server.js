@@ -15,13 +15,19 @@ require('./models');
 const app = new koa();
 
 // Enable cors
-app.use(cors());
+const corsConfig = {
+  origin: process.env.ALLOWED_ORIGIN,
+  credentials: true,
+};
+app.use(cors(corsConfig));
 
 // Enable logging.
 app.use(logger());
 
 // sessions
-app.use(session(app));
+app.keys = [process.env.SESSION_SECRET];
+const sessionConfig = { sameSite: 'none' };
+app.use(session(sessionConfig, app));
 
 // parse request body.
 app.use(bodyParser());
